@@ -40,7 +40,7 @@ Q_ML2_TENANT_NETWORK_TYPE=vxlan
 ENABLE_TENANT_TUNNELS=True
 OVS_ENABLE_TUNNELING=True
 
-enable_service rabbit mysql
+enable_service rabbit mysql key
 
 {% if nova %}
 enable_service n-api n-crt n-obj n-cpu n-cond n-sch

@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 
-DEVSTACK_IP = ENV["DEVSTACK_IP"] || "172.20.1.100"
+DEVSTACK_IP = ENV["DEVSTACK_IP"] || "172.20.1.11"
 
 Vagrant.configure("2") do |config|
 
