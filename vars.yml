@@ -6,7 +6,7 @@ devstack_user: ubuntu
 devstack_path: /opt/devstack
 devstack_dest: /opt/stack
 host_ip: 172.20.1.11
-external_interface: eth2
+external_interface: enp0s9
 admin_password: password
 tenant_ip_range: 10.0.0.0/24
 tenant_ip_gateway: 10.0.0.1
