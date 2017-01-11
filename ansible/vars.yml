@@ -1,0 +1,26 @@
+---
+local_conf_path: templates/local.conf.j2
+keyring_config_dir: /home/ubuntu/.local/share/python_keyring
+devstack_repo: git://github.com/openstack-dev/devstack.git
+devstack_branch: stable/newton
+devstack_user: ubuntu
+devstack_path: /opt/devstack
+devstack_dest: /opt/stack
+host_ip: 172.20.1.11
+external_interface: enp0s9
+admin_password: password
+tenant_ip_range: 10.0.0.0/24
+tenant_ip_gateway: 10.0.0.1
+floating_ip_range: 172.20.2.0/24
+floating_ip_gateway: 172.20.2.1
+floating_ip_pool: "start=172.20.2.11,end=172.20.2.30"
+nova: True
+neutron: True
+neutron_lbaasv2: False
+glance: True
+horizon: True
+heat: True
+cinder: False
+swift: False
+ceilometer: False
+gnocchi: False

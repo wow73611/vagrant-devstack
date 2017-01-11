@@ -1,0 +1,118 @@
+[[local|localrc]]
+
+ADMIN_PASSWORD={{ admin_password }}
+DATABASE_PASSWORD=$ADMIN_PASSWORD
+RABBIT_PASSWORD=$ADMIN_PASSWORD
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+SERVICE_TOKEN=$ADMIN_PASSWORD
+
+DEST={{ devstack_dest }}
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+LOG_COLOR=True
+SCREEN_LOGDIR=$DEST/logs
+
+HOST_IP={{ host_ip }}
+
+FIXED_RANGE={{ tenant_ip_range }}
+NETWORK_GATEWAY={{ tenant_ip_gateway }}
+FLOATING_RANGE={{ floating_ip_range }}
+PUBLIC_NETWORK_GATEWAY={{ floating_ip_gateway }}
+Q_FLOATING_ALLOCATION_POOL={{ floating_ip_pool }}
+
+Q_USE_SECGROUP=True
+Q_USE_PROVIDERNET_FOR_PUBLIC=True
+Q_L3_ENABLED=True
+
+PUBLIC_INTERFACE={{ external_interface }}
+
+Q_AGENT=openvswitch
+Q_PLUGIN=ml2
+Q_ML2_PLUGIN_MECHANISM_DRIVERS=openvswitch,linuxbridge
+
+PHYSICAL_NETWORK=public
+PUBLIC_PHYSICAL_NETWORK=public
+PUBLIC_BRIDGE=br-ex
+OVS_PHYSICAL_BRIDGE=br-ex
+OVS_BRIDGE_MAPPINGS=public:br-ex
+
+Q_ML2_TENANT_NETWORK_TYPE=vxlan
+ENABLE_TENANT_TUNNELS=True
+OVS_ENABLE_TUNNELING=True
+
+enable_service rabbit mysql key
+
+{% if nova %}
+enable_service n-api n-crt n-obj n-cpu n-cond n-sch
+enable_service n-novnc n-cauth
+{% endif %}
+
+{% if neutron %}
+disable_service n-net
+enable_service q-svc q-agt q-dhcp q-l3 q-meta neutron
+enable_service q-vpn q-fwaas
+
+{% if neutron_lbaasv2 %}
+enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas {{ devstack_branch }}
+enable_plugin neutron-lbaas-dashboard https://git.openstack.org/openstack/neutron-lbaas-dashboard {{ devstack_branch }}
+enable_plugin barbican https://git.openstack.org/openstack/barbican {{ devstack_branch }}
+enable_plugin octavia https://git.openstack.org/openstack/octavia {{ devstack_branch }}
+enable_service q-lbaasv2
+enable_service octavia o-cw o-hk o-hm o-api
+
+{% else %}
+enable_service q-lbaas
+{% endif %}
+
+{% endif %}
+
+{% if glance %}
+enable_service g-api g-reg
+{% endif %}
+
+{% if horizon %}
+enable_service horizon
+{% endif %}
+
+{% if heat %}
+enable_service heat h-api h-api-cfn h-api-cw h-eng
+{% endif %}
+
+{% if cinder %}
+enable_service cinder c-api c-vol c-sch c-bak
+VOLUME_GROUP="cinder-volumes"
+CINDER_ENABLED_BACKENDS=${CINDER_ENABLED_BACKENDS:-lvm:lvmdriver-1}
+VOLUME_BACKING_FILE_SIZE=20G
+{% endif %}
+
+{% if swift %}
+enable_service s-proxy s-object s-container s-account
+SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+SWIFT_REPLICAS=2
+SWIFT_DATA_DIR=$DEST/data/swift
+{% endif %}
+
+{% if ceilometer %}
+enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer {{ devstack_branch }}
+enable_service ceilometer-acompute ceilometer-acentral
+enable_service ceilometer-anotification ceilometer-collector ceilometer-api
+CEILOMETER_PIPELINE_INTERVAL=600
+CEILOMETER_EVENTS=True
+CEILOMETER_EVENT_ALARM=True
+
+{% if gnocchi %}
+enable_plugin gnocchi https://github.com/openstack/gnocchi stable/3.0
+enable_service gnocchi-api gnocchi-metricd gnocchi-grafana
+enable_plugin aodh https://git.openstack.org/openstack/aodh {{ devstack_branch }}
+enable_service aodh-api aodh-evaluator aodh-notifier aodh-listener
+CEILOMETER_BACKEND=gnocchi
+
+{% else %}
+enable_service ceilometer-alarm-notifier ceilometer-alarm-evaluator
+CEILOMETER_BACKEND=mongodb
+{% endif %}
+
+{% endif %}
+
+enable_service tempest
+
