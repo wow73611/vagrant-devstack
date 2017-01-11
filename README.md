@@ -4,7 +4,7 @@ This repository contains a Vagrantfile and an Ansible playbook
 that sets up a VirtualBox virtual machine that installs [DevStack][4].
 
 
-You can configure devstack services by editing the devstack.yml file.
+You can configure devstack services by editing the playbook.yml file.
 
 
 ## Prereqs
@@ -20,14 +20,27 @@ Install the following applications on your local machine first:
 
 Grab this repo and do a `vagrant up`, like so:
 
-    git clone https://github.com/wow73611/vagrant-devstack
-    cd vagrant-devstack
-    vagrant up
+```bash
+git clone https://github.com/wow73611/vagrant-devstack
+cd vagrant-devstack
+vagrant up
+```
 
+
+The Vagrantfile use config.yaml file as default configuration.
+You can define another configuration file by the following: 
+
+```bash
+export USER_CONF=my.yaml && vagrant up
+
+or
+
+USER_CONF=my.yaml vagrant up
+```
 
 ## Horizon
 
-* URL: http://172.20.1.100
+* URL: http://172.20.1.11
 * Username: admin or demo
 * Password: password
 
@@ -48,9 +61,6 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
 ## Initial networking configuration
-
-![Network topology](topology.png)
-
 
 DevStack configures an internal network ("private") and an external network ("public"), with a router ("router1") connecting the two together. The router is configured to use its interface on the "public" network as the gateway.
 

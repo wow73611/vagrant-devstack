@@ -1,4 +1,5 @@
 ---
+local_conf_path: templates/local.conf.j2
 keyring_config_dir: /home/ubuntu/.local/share/python_keyring
 devstack_repo: git://github.com/openstack-dev/devstack.git
 devstack_branch: stable/newton

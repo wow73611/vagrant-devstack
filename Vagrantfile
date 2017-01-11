@@ -4,24 +4,15 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2" if not defined? VAGRANTFILE_API_VERSION
 
-conf = {
-    'box_name' => 'ubuntu/xenial64',
-    'box_url' => '',
-    'box_hostname' => 'devstack',
-    'vm_memory' => 8192,
-    'vm_cpus' => 4,
-#   'proxy' => 'http://192.168.1.1',
-#   'local_sync_folder' => './opt',
-    'internal_ip' => '172.20.1.11',
-    'external_ip' => '172.20.2.1',
-}
+conf = {}
 
 require 'yaml'
-if File.file?('config.yaml')
-    user_conf = YAML.load_file('config.yaml')
+conf_path = ENV.fetch('USER_CONF','config.yaml')
+if File.file?(conf_path)
+    user_conf = YAML.load_file(conf_path)
     conf.update(user_conf)
 else
-    raise "Configuration file 'config.yaml' does not exist."
+    raise "Configuration file #{conf_path} does not exist."
 end
 
 def config_network(vm, conf)
