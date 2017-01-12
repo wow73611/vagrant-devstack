@@ -36,7 +36,7 @@ end
 def config_provision(vm, conf)
     vm.provision :ansible do |ansible|
         ansible.host_key_checking = false
-        ansible.playbook = "playbook.yml"
+        ansible.playbook = "ansible/playbook.yml"
         ansible.verbose = "vv"
         #ansible.extra_vars = {}
     end
