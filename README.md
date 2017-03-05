@@ -40,7 +40,7 @@ USER_CONF=my.yaml vagrant up
 
 ## Horizon
 
-* URL: http://172.20.1.11
+* URL: http://192.168.10.101
 * Username: admin or demo
 * Password: password
 

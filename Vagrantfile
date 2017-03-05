@@ -15,19 +15,32 @@ else
     raise "Configuration file #{conf_path} does not exist."
 end
 
+$network_conf= <<SCRIPT
+echo "auto eth2
+iface eth2 inet manual
+up ip link set dev $IFACE up
+down ip link set dev $IFACE down
+" >> /etc/network/interfaces
+SCRIPT
+
+$image_api= <<SCRIPT
+echo "export OS_IMAGE_API_VERSION=${OS_IMAGE_API_VERSION-2}" >> /opt/devstack/openrc
+SCRIPT
+
 def config_network(vm, conf)
     # this will be the endpoint
     vm.network :private_network, ip: conf['internal_ip']
     # this will be the OpenStack "public" network ip and subnet mask
     # should match floating_ip_range var in devstack.yml
     vm.network :private_network, ip: conf['external_ip'], :netmask => "255.255.255.0", :auto_config => false
-    vm.network :forwarded_port, guest: 80, host: 8080
+    #vm.network :forwarded_port, guest: 80, host: 8080
 end
 
 def config_provider(vm, conf)
     vm.provider :virtualbox do |vb|
         vb.customize ["modifyvm", :id, "--memory", conf['vm_memory']]
         vb.customize ["modifyvm", :id, "--cpus", conf['vm_cpus']]
+        vb.customize ["modifyvm", :id, "--ioapic", "on"]
        	# eth2 must be in promiscuous mode for floating IPs to be accessible
        	vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
     end
@@ -38,12 +51,14 @@ def config_provision(vm, conf)
         ansible.host_key_checking = false
         ansible.playbook = "ansible/playbook.yml"
         ansible.verbose = "vv"
+        #ansible.raw_arguments = ['-T 30', '-e pipelining=True']
         #ansible.extra_vars = {}
     end
-    vm.provision :shell, :inline => "cd /opt/devstack; sudo -u ubuntu env HOME=/home/ubuntu ./stack.sh"
+    vm.provision :shell, :inline => $network_conf
+    vm.provision :shell, :inline => $image_api
+    #vm.provision :shell, :inline => "cd /opt/devstack; sudo -u stack ./stack.sh"
     # interface should match external_interface var in devstack.yml
-    #vm.provision :shell, :inline => "ovs-vsctl add-port br-ex enp0s9"
-    #vm.provision :shell, :inline => "virsh net-destroy default"
+    #vm.provision :shell, :inline => "ovs-vsctl add-port br-ex eth2"
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
