@@ -14,13 +14,3 @@ tenant_ip_gateway: 10.0.0.1
 floating_ip_range: 192.168.10.0/24
 floating_ip_gateway: 192.168.10.1
 floating_ip_pool: "start=192.168.10.105,end=192.168.10.110"
-nova: True
-neutron: True
-neutron_lbaasv2: False
-glance: True
-horizon: True
-heat: True
-cinder: False
-swift: False
-ceilometer: True
-gnocchi: False

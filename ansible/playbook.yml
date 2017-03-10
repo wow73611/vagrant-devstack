@@ -56,8 +56,8 @@
       lineinfile:
           dest: /etc/sudoers
           state: present
-          regexp: "^%{{ devstack_user }}"
-          line: "%{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
+          regexp: "^{{ devstack_user }}"
+          line: "{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
       become: True
 
     - name: checkout devstack

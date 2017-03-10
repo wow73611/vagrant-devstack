@@ -23,10 +23,6 @@ down ip link set dev $IFACE down
 " >> /etc/network/interfaces
 SCRIPT
 
-$image_api= <<SCRIPT
-echo "export OS_IMAGE_API_VERSION=${OS_IMAGE_API_VERSION-2}" >> /opt/devstack/openrc
-SCRIPT
-
 def config_network(vm, conf)
     # this will be the endpoint
     vm.network :private_network, ip: conf['internal_ip']
@@ -34,6 +30,12 @@ def config_network(vm, conf)
     # should match floating_ip_range var in devstack.yml
     vm.network :private_network, ip: conf['external_ip'], :netmask => "255.255.255.0", :auto_config => false
     #vm.network :forwarded_port, guest: 80, host: 8080
+    #vm.network :forwarded_port, guest: 5000, host: 5000
+    #vm.network :forwarded_port, guest: 35357, host: 35357
+    #vm.network :forwarded_port, guest: 8774, host: 8774
+    #vm.network :forwarded_port, guest: 8776, host: 8776
+    #vm.network :forwarded_port, guest: 9292, host: 9292
+    #vm.network :forwarded_port, guest: 9696, host: 9696
 end
 
 def config_provider(vm, conf)
@@ -50,15 +52,11 @@ def config_provision(vm, conf)
     vm.provision :ansible do |ansible|
         ansible.host_key_checking = false
         ansible.playbook = "ansible/playbook.yml"
-        ansible.verbose = "vv"
-        #ansible.raw_arguments = ['-T 30', '-e pipelining=True']
+        ansible.verbose = "v"
         #ansible.extra_vars = {}
     end
     vm.provision :shell, :inline => $network_conf
-    vm.provision :shell, :inline => $image_api
     #vm.provision :shell, :inline => "cd /opt/devstack; sudo -u stack ./stack.sh"
-    # interface should match external_interface var in devstack.yml
-    #vm.provision :shell, :inline => "ovs-vsctl add-port br-ex eth2"
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -69,12 +67,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     if Vagrant.has_plugin?("vagrant-cachier")
         config.cache.scope = :box
-    end
-
-    if Vagrant.has_plugin?("vagrant-proxyconf") && conf['proxy']
-        config.proxy.http     = conf['proxy']
-        config.proxy.https    = conf['proxy']
-        config.proxy.no_proxy = "localhost,127.0.0.1"
     end
 
     # resolve "stdin: is not a tty warning", related issue and proposed 

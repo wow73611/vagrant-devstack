@@ -16,98 +16,6 @@ RECLONE=False
 OFFLINE=False
 GIT_BASE=git://git.openstack.org
 
-#  OpenStack Server Components  #
-CEILOMETER_BRANCH=kilo-eol
-CINDER_BRANCH=kilo-eol
-GLANCE_BRANCH=kilo-eol
-HEAT_BRANCH=kilo-eol
-HORIZON_BRANCH=kilo-eol
-IRONIC_BRANCH=kilo-eol
-KEYSTONE_BRANCH=kilo-eol
-NEUTRON_BRANCH=kilo-eol
-NEUTRON_FWAAS_BRANCH=kilo-eol
-NEUTRON_LBAAS_BRANCH=kilo-eol
-NEUTRON_VPNAAS_BRANCH=kilo-eol
-NOVA_BRANCH=kilo-eol
-SAHARA_BRANCH=kilo-eol
-SWIFT_BRANCH=kilo-eol
-TROVE_BRANCH=kilo-eol
-
-#  Testing Components  #
-#LIBS_FROM_GIT=tempest-lib
-REQUIREMENTS_BRANCH=stable/kilo
-TEMPEST_BRANCH=master
-
-#  OpenStack Client Library Componets  #
-#LIBS_FROM_GIT+=,python-ceilometerclient,python-cinderclient,python-glanceclient,python-heatclient
-#LIBS_FROM_GIT+=,python-ironicclient,python-keystoneclient,python-neutronclient,python-novaclient
-#LIBS_FROM_GIT+=,python-saharaclient,python-swiftclient,python-troveclient,python-openstackclient
-
-#CEILOMETERCLIENT_BRANCH=kilo-eol
-#CINDERCLIENT_BRANCH=kilo-eol
-#GLANCECLIENT_BRANCH=kilo-eol
-#HEATCLIENT_BRANCH=kilo-eol
-#IRONICCLIENT_BRANCH=kilo-eol
-#KEYSTONECLIENT_BRANCH=kilo-eol
-#NEUTRONCLIENT_BRANCH=kilo-eol
-#NOVACLIENT_BRANCH=kilo-eol
-#SAHARACLIENT_BRANCH=kilo-eol
-#SWIFTCLIENT_BRANCH=kilo-eol
-#TROVECLIENT_BRANCH=kilo-eol
-#OPENSTACKCLIENT_BRANCH=kilo-eol
-
-#  Oslo Libraries  #
-LIBS_FROM_GIT+=,cliff,debtcollector,oslo.concurrency,oslo.config,oslo.context,oslo.db,oslo.i18n
-LIBS_FROM_GIT+=,oslo.log,oslo.messaging,oslo.middleware,oslo.policy,oslo.rootwrap,oslo.serialization
-LIBS_FROM_GIT+=,oslo.utils,oslo.versionedobjects,oslo.vmware,pycadf,stevedore,taskflow,tooz,pbr
-
-CLIFF_BRANCH=kilo-eol
-DEBTCOLLECTOR_BRANCH=kilo-eol
-OSLOCON_BRANCH=kilo-eol
-OSLOCFG_BRANCH=kilo-eol
-OSLOCTX_BRANCH=kilo-eol
-OSLODB_BRANCH=kilo-eol
-OSLOI18N_BRANCH=kilo-eol
-OSLOLOG_BRANCH=kilo-eol
-OSLOMSG_BRANCH=kilo-eol
-OSLOMID_BRANCH=kilo-eol
-OSLOPOLICY_BRANCH=kilo-eol
-OSLORWRAP_BRANCH=kilo-eol
-OSLOSERIALIZATION_BRANCH=kilo-eol
-OSLOUTILS_BRANCH=kilo-eol
-OSLOVERSIONEDOBJECTS_BRANCH=kilo-eol
-OSLOVMWARE_BRANCH=kilo-eol
-PYCADF_BRANCH=kilo-eol
-STEVEDORE_BRANCH=kilo-eol
-TASKFLOW_BRANCH=kilo-eol
-TOOZ_BRANCH=kilo-eol
-PBR_BRANCH=kilo-eol
-
-#  Libraries managed by OpenStack programs (non oslo)  #
-LIBS_FROM_GIT+=,glance_store,django_openstack_auth,keystonemiddleware,ceilometermiddleware
-
-GLANCE_STORE_BRANCH=kilo-eol
-HEAT_CFNTOOLS_BRANCH=master
-HEAT_TEMPLATES_BRANCH=master
-HORIZONAUTH_BRANCH=kilo-eol
-KEYSTONEMIDDLEWARE_BRANCH=kilo-eol
-SWIFT3_BRANCH=master
-CEILOMETERMIDDLEWARE_BRANCH=kilo-eol
-#HEAT_CFNTOOLS_BRANCH=${HEAT_CFNTOOLS_BRANCH:-master}
-#HEAT_TEMPLATES_BRANCH=${HEAT_TEMPLATES_BRANCH:-master}
-#SWIFT3_BRANCH=${SWIFT3_BRANCH:-master}
-
-#  TripleO / Heat Agent Components  #
-#DIB_UTILS_BRANCH=${DIB_UTILS_BRANCH:-master}
-#OAC_BRANCH=${OAC_BRANCH:-master}
-#OCC_BRANCH=${OCC_BRANCH:-master}
-#ORC_BRANCH=${ORC_BRANCH:-master}
-
-#  3rd Party Components (non pip installable)  #
-#IRONIC_PYTHON_AGENT_BRANCH=${IRONIC_PYTHON_AGENT_BRANCH:-master}
-#NOVNC_BRANCH=${NOVNC_BRANCH:-master}
-#SPICE_BRANCH=${SPICE_BRANCH:-master}
-
 HOST_IP={{ host_ip }}
 
 FIXED_RANGE={{ tenant_ip_range }}
@@ -138,7 +46,7 @@ OVS_ENABLE_TUNNELING=True
 
 NEUTRON_CREATE_INITIAL_NETWORKS=True
 
-#enable_service rabbit mysql key
+enable_service key rabbit mysql
 
 enable_service n-api n-crt n-obj n-cpu n-cond n-sch
 enable_service n-novnc n-cauth
@@ -150,22 +58,16 @@ enable_service g-api g-reg
 
 enable_service horizon
 
-enable_service heat h-api h-api-cfn h-api-cw h-eng
-
 enable_service cinder c-api c-vol c-sch c-bak
 VOLUME_GROUP="cinder-volumes"
 CINDER_ENABLED_BACKENDS=${CINDER_ENABLED_BACKENDS:-lvm:lvmdriver-1}
 VOLUME_BACKING_FILE_SIZE=20G
 
+enable_service tempest
+
 enable_service s-proxy s-object s-container s-account
 SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
-SWIFT_REPLICAS=2
+SWIFT_REPLICAS=3
 SWIFT_DATA_DIR=$DEST/data/swift
 
-disable_service tempest
-
-enable_service ceilometer-acompute ceilometer-acentral
-enable_service ceilometer-anotification ceilometer-collector ceilometer-api
-enable_service ceilometer-alarm-notifier ceilometer-alarm-evaluator
-CEILOMETER_PIPELINE_INTERVAL=600
-
+enable_service heat h-api h-api-cfn h-api-cw h-eng

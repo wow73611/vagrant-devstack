@@ -4,7 +4,6 @@ box_name: ubuntu/trusty64
 box_hostname: devstack
 vm_memory: 8192
 vm_cpus: 4
-#proxy: http://192.168.1.1
 #local_sync_folder: ./opt
 internal_ip: 192.168.10.101
 external_ip: 192.168.10.102
