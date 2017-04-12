@@ -16,6 +16,34 @@ Install the following applications on your local machine first:
  * [Ansible][3]
 
 
+Example for ubuntu 14.04 enviroment:
+ 
+- Linux Ubuntu 14.04
+- VirutalBox >= 5.0
+- Vagrant >= 1.5.0
+- ansible >= 1.8.0
+
+Install VirtualBox
+```
+$ sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib' > /etc/apt/sources.list.d/virtualbox.list"
+$ wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
+$ sudo apt-get update
+$ sudo apt-get install -y virtualbox-5.1
+```
+
+Install Vagrant
+```
+$ wget https://releases.hashicorp.com/vagrant/1.8.7/vagrant_1.8.7_x86_64.deb
+$ sudo dpkg -i vagrant_1.8.7_x86_64.deb
+```
+
+Install dependencies
+```
+$ sudo apt-get install -y python-dev python-virtualenv
+$ sudo apt-get install -y libssl-dev libffi-dev
+```
+
+
 ## Boot the virtual machine and install DevStack
 
 Grab this repo and do a `vagrant up`, like so:
@@ -24,6 +52,10 @@ Grab this repo and do a `vagrant up`, like so:
 git clone https://github.com/wow73611/vagrant-devstack
 cd vagrant-devstack
 vagrant up
+vagrant status
+vagrant ssh
+vagrant halt
+vagrant destroy
 ```
 
 
