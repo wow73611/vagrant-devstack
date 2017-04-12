@@ -7,7 +7,7 @@ VAGRANTFILE_API_VERSION = "2" if not defined? VAGRANTFILE_API_VERSION
 conf = {}
 
 require 'yaml'
-conf_path = ENV.fetch('USER_CONF','config.yaml')
+conf_path = ENV.fetch('USER_CONF','config.yml')
 if File.file?(conf_path)
     user_conf = YAML.load_file(conf_path)
     conf.update(user_conf)

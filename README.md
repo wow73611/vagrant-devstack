@@ -59,15 +59,15 @@ vagrant destroy
 ```
 
 
-The Vagrantfile use config.yaml file as default configuration.
+The Vagrantfile use config.yml file as default configuration.
 You can define another configuration file by the following: 
 
 ```bash
-export USER_CONF=my.yaml && vagrant up
+export USER_CONF=my.yml && vagrant up
 
 or
 
-USER_CONF=my.yaml vagrant up
+USER_CONF=my.yml vagrant up
 ```
 
 ## Horizon
