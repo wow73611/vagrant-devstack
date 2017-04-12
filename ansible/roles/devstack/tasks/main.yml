@@ -1,0 +1,70 @@
+---
+
+- name: install git
+  apt: "name=git update_cache=yes"
+  become: True
+
+- name: create group
+  group: name={{ devstack_user }}
+  become: True
+
+- name: create user
+  user: >
+    name={{ devstack_user }}
+    group={{ devstack_user }}
+    createhome=yes
+    password="$6$rounds=656000$3LwGBzYlnrnB5X0o$csIW7MJJCWVb6P0qEtl08Jyy454fWdMzwP0C3wHGREpd8tZF2nv.NdcZ8uXYymger7WnILGJqpXsDOUL17F7n0"
+  become: True
+
+- name: create devstack path folder, ownership, group and mode
+  file: >
+    path={{ devstack_path }}
+    state=directory
+    mode=0755
+    owner={{ devstack_user }}
+    group={{ devstack_user }}
+    recurse=yes
+  become: True
+
+- name: create devstack dest folder, ownership, group and mode
+  file: >
+    path={{ devstack_dest }}
+    state=directory
+    mode=0755
+    owner={{ devstack_user }}
+    group={{ devstack_user }}
+    recurse=yes
+  become: True
+
+- name: allow user group to have passwordless sudo
+  lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "^{{ devstack_user }}"
+      line: "{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
+  become: True
+
+- name: checkout devstack
+  git: repo={{ devstack_repo }} dest={{ devstack_path }} version={{ devstack_branch }} accept_hostkey=yes
+  become_user: "{{ devstack_user }}"
+  become: yes
+
+- name: local.conf
+  template: src={{ local_conf_path }} dest={{ devstack_path }}/local.conf
+  become_user: "{{ devstack_user }}"
+  become: yes
+
+#- name: source openrc in profile
+#  lineinfile: dest=/home/{{ devstack_user }}/.profile regexp=".*openrc" line='. {{ devstack_path }}/openrc'
+
+#- name: enable external interface
+#  command: ip link set dev {{ external_interface }} up
+#  become: True
+
+#- name: add port to br-ex bridge
+#  shell: /usr/bin/ovs-vsctl add-port br-ex {{ external_interface }}
+#  become: True
+
+#- name: destroy default network of libvirt
+#  shell: /usr/bin/virsh net-destroy default
+#  become: True
