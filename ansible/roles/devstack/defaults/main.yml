@@ -1,6 +1,5 @@
 ---
 
-local_conf_path: templates/local.conf.j2
 devstack_repo: git://github.com/openstack-dev/devstack.git
 devstack_branch: stable/kilo
 devstack_user: stack
@@ -14,3 +13,7 @@ tenant_ip_gateway: 10.0.0.1
 floating_ip_range: 192.168.10.0/24
 floating_ip_gateway: 192.168.10.1
 floating_ip_pool: "start=192.168.10.105,end=192.168.10.110"
+
+stack_user: stack
+# plain text: stack
+stack_password: "$6$rounds=656000$3LwGBzYlnrnB5X0o$csIW7MJJCWVb6P0qEtl08Jyy454fWdMzwP0C3wHGREpd8tZF2nv.NdcZ8uXYymger7WnILGJqpXsDOUL17F7n0"

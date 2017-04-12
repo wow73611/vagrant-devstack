@@ -1,40 +1,43 @@
 ---
 
 - name: install git
-  apt: "name=git update_cache=yes"
-  become: True
+  apt:
+    name: git
+    update_cache: yes
+  become: yes
 
 - name: create group
-  group: name={{ devstack_user }}
-  become: True
+  group:
+    name: "{{ devstack_user }}"
+  become: yes
 
 - name: create user
-  user: >
-    name={{ devstack_user }}
-    group={{ devstack_user }}
-    createhome=yes
-    password="$6$rounds=656000$3LwGBzYlnrnB5X0o$csIW7MJJCWVb6P0qEtl08Jyy454fWdMzwP0C3wHGREpd8tZF2nv.NdcZ8uXYymger7WnILGJqpXsDOUL17F7n0"
-  become: True
+  user:
+    name: "{{ devstack_user }}"
+    group: "{{ devstack_user }}"
+    createhome: yes
+    password: "{{ stack_password }}"
+  become: yes
 
 - name: create devstack path folder, ownership, group and mode
-  file: >
-    path={{ devstack_path }}
-    state=directory
-    mode=0755
-    owner={{ devstack_user }}
-    group={{ devstack_user }}
-    recurse=yes
-  become: True
+  file:
+    path: "{{ devstack_path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ devstack_user }}"
+    group: "{{ devstack_user }}"
+    recurse: yes
+  become: yes
 
 - name: create devstack dest folder, ownership, group and mode
-  file: >
-    path={{ devstack_dest }}
-    state=directory
-    mode=0755
-    owner={{ devstack_user }}
-    group={{ devstack_user }}
-    recurse=yes
-  become: True
+  file:
+    path: "{{ devstack_dest }}"
+    state: directory
+    mode: 0755
+    owner: "{{ devstack_user }}"
+    group: "{{ devstack_user }}"
+    recurse: yes
+  become: yes
 
 - name: allow user group to have passwordless sudo
   lineinfile:
@@ -42,15 +45,51 @@
       state: present
       regexp: "^{{ devstack_user }}"
       line: "{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
-  become: True
+  become: yes
 
 - name: checkout devstack
-  git: repo={{ devstack_repo }} dest={{ devstack_path }} version={{ devstack_branch }} accept_hostkey=yes
+  git:
+    repo: "{{ devstack_repo }}"
+    dest: "{{ devstack_path }}"
+    version: "{{ devstack_branch }}"
+    accept_hostkey: yes
+    force: yes
   become_user: "{{ devstack_user }}"
   become: yes
 
-- name: local.conf
-  template: src={{ local_conf_path }} dest={{ devstack_path }}/local.conf
+#- name: allow user group to have passwordless sudo
+#  lineinfile:
+#      dest: "{{ devstack_path }}/tools/install_pip.sh"
+#      state: present
+#      regexp: "^pip_install -U setuptools"
+#      line: "pip_install -U setuptools==18.2"
+#  become_user: "{{ stack_user }}"
+#  become: yes
+
+- name: copy local.conf
+  template:
+    src: local.conf.j2
+    dest: "{{ devstack_path }}/local.conf"
+  become_user: "{{ devstack_user }}"
+  become: yes
+
+- name: copy autostack.sh
+  template:
+    src: autostack.sh
+    dest: "/home/{{ devstack_user }}/autostack.sh"
+    mode: 0755
+    owner: "{{ devstack_user }}"
+  become_user: "{{ devstack_user }}"
+  become: yes
+
+- name: unstack devstack
+  command: "{{ devstack_path }}/unstack.sh"
+  ignore_errors: true
+  become_user: "{{ devstack_user }}"
+  become: yes
+
+- name: waiting for devstack installation
+  command: "/home/{{ devstack_user }}/autostack.sh"
   become_user: "{{ devstack_user }}"
   become: yes
 
