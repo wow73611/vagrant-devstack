@@ -25,10 +25,10 @@ SCRIPT
 
 def config_network(vm, conf)
     # this will be the endpoint
-    vm.network :private_network, ip: conf['internal_ip']
+    vm.network :private_network, ip: conf['host_ip']
     # this will be the OpenStack "public" network ip and subnet mask
     # should match floating_ip_range var in devstack.yml
-    vm.network :private_network, ip: conf['external_ip'], :netmask => "255.255.255.0", :auto_config => false
+    vm.network :private_network, ip: conf['public_ip'], :netmask => "255.255.255.0", :auto_config => false
     #vm.network :forwarded_port, guest: 80, host: 8080
     #vm.network :forwarded_port, guest: 5000, host: 5000
     #vm.network :forwarded_port, guest: 35357, host: 35357
