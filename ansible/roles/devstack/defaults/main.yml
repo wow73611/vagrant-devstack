@@ -2,12 +2,12 @@
 
 devstack_repo: git://github.com/openstack-dev/devstack.git
 devstack_branch: stable/kilo
-devstack_user: stack
+devstack_service_branch: "{{ devstack_branch }}"
 devstack_path: /opt/devstack
 devstack_dest: /opt/stack
+devstack_admin_password: password
 host_ip: 192.168.10.101
 external_interface: eth2
-admin_password: password
 tenant_ip_range: 10.0.0.0/24
 tenant_ip_gateway: 10.0.0.1
 floating_ip_range: 192.168.10.0/24

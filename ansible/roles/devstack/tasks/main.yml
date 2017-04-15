@@ -8,13 +8,13 @@
 
 - name: create group
   group:
-    name: "{{ devstack_user }}"
+    name: "{{ stack_user }}"
   become: yes
 
 - name: create user
   user:
-    name: "{{ devstack_user }}"
-    group: "{{ devstack_user }}"
+    name: "{{ stack_user }}"
+    group: "{{ stack_user }}"
     createhome: yes
     password: "{{ stack_password }}"
   become: yes
@@ -24,8 +24,8 @@
     path: "{{ devstack_path }}"
     state: directory
     mode: 0755
-    owner: "{{ devstack_user }}"
-    group: "{{ devstack_user }}"
+    owner: "{{ stack_user }}"
+    group: "{{ stack_user }}"
     recurse: yes
   become: yes
 
@@ -34,8 +34,8 @@
     path: "{{ devstack_dest }}"
     state: directory
     mode: 0755
-    owner: "{{ devstack_user }}"
-    group: "{{ devstack_user }}"
+    owner: "{{ stack_user }}"
+    group: "{{ stack_user }}"
     recurse: yes
   become: yes
 
@@ -43,8 +43,8 @@
   lineinfile:
       dest: /etc/sudoers
       state: present
-      regexp: "^{{ devstack_user }}"
-      line: "{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
+      regexp: "^{{ stack_user }}"
+      line: "{{ stack_user }} ALL=(ALL) NOPASSWD: ALL"
   become: yes
 
 - name: checkout devstack
@@ -54,7 +54,7 @@
     version: "{{ devstack_branch }}"
     accept_hostkey: yes
     force: yes
-  become_user: "{{ devstack_user }}"
+  become_user: "{{ stack_user }}"
   become: yes
 
 #- name: allow user group to have passwordless sudo
@@ -70,28 +70,31 @@
   template:
     src: local.conf.j2
     dest: "{{ devstack_path }}/local.conf"
-  become_user: "{{ devstack_user }}"
+  become_user: "{{ stack_user }}"
   become: yes
 
 - name: copy autostack.sh
   template:
     src: autostack.sh
-    dest: "/home/{{ devstack_user }}/autostack.sh"
+    dest: "/home/{{ stack_user }}/autostack.sh"
     mode: 0755
-    owner: "{{ devstack_user }}"
-  become_user: "{{ devstack_user }}"
+    owner: "{{ stack_user }}"
+  become_user: "{{ stack_user }}"
   become: yes
 
 - name: unstack devstack
   command: "{{ devstack_path }}/unstack.sh"
   ignore_errors: true
-  become_user: "{{ devstack_user }}"
+  become_user: "{{ stack_user }}"
   become: yes
 
 - name: waiting for devstack installation
-  command: "/home/{{ devstack_user }}/autostack.sh"
-  become_user: "{{ devstack_user }}"
+  command: "/home/{{ stack_user }}/autostack.sh"
+  become_user: "{{ stack_user }}"
   become: yes
+
+#- name: Make sure 'localhost' entry exists in /etc/hosts
+#  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 devstack localhost' owner=root group=root mode=0644
 
 #- name: source openrc in profile
 #  lineinfile: dest=/home/{{ devstack_user }}/.profile regexp=".*openrc" line='. {{ devstack_path }}/openrc'

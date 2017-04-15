@@ -5,9 +5,13 @@
   pre_tasks:
     - name: install python2
       raw: sudo apt-get -y install python-minimal
+      become: yes
 
 - hosts: all
   become: yes
   gather_facts: yes
   roles:
     - devstack
+
+
+

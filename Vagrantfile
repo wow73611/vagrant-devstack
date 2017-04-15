@@ -43,8 +43,8 @@ def config_provider(vm, conf)
         vb.customize ["modifyvm", :id, "--memory", conf['vm_memory']]
         vb.customize ["modifyvm", :id, "--cpus", conf['vm_cpus']]
         vb.customize ["modifyvm", :id, "--ioapic", "on"]
-       	# eth2 must be in promiscuous mode for floating IPs to be accessible
-       	vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        # eth2 must be in promiscuous mode for floating IPs to be accessible
+        vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
     end
 end
 
