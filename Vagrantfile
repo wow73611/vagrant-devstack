@@ -53,7 +53,16 @@ def config_provision(vm, conf)
         ansible.host_key_checking = false
         ansible.playbook = "ansible/playbook.yml"
         ansible.verbose = "v"
-        #ansible.extra_vars = {}
+        ansible.raw_arguments = ['-T 30', '-e pipelining=True']
+        ansible.extra_vars = {
+            host_ip: conf['host_ip'],
+            public_ip: conf['public_ip'],
+            public_interface: conf['public_interface'],
+            devstack_branch: conf['devstack_branch'],
+            devstack_service_branch: conf['devstack_service_branch'],
+            devstack_admin_password: conf['devstack_admin_password'],
+
+        }
     end
     vm.provision :shell, :inline => $network_conf
     #vm.provision :shell, :inline => "cd /opt/devstack; sudo -u stack ./stack.sh"

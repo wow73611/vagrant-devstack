@@ -28,7 +28,7 @@ Q_USE_SECGROUP=True
 Q_USE_PROVIDERNET_FOR_PUBLIC=True
 Q_L3_ENABLED=True
 
-PUBLIC_INTERFACE={{ external_interface }}
+PUBLIC_INTERFACE={{ public_interface }}
 
 Q_AGENT=openvswitch
 Q_PLUGIN=ml2
@@ -46,10 +46,9 @@ OVS_ENABLE_TUNNELING=True
 
 NEUTRON_CREATE_INITIAL_NETWORKS=True
 
-enable_service key rabbit mysql
+enable_service rabbit mysql key
 
-enable_service n-api n-crt n-obj n-cpu n-cond n-sch
-enable_service n-novnc n-cauth
+enable_service n-api n-crt n-obj n-cpu n-cond n-sch n-novnc n-cauth
 
 disable_service n-net
 enable_service q-svc q-agt q-dhcp q-l3 q-meta neutron

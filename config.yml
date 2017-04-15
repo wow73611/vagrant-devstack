@@ -5,5 +5,9 @@ box_hostname: devstack
 vm_memory: 8192
 vm_cpus: 4
 #local_sync_folder: ./opt
-internal_ip: 192.168.10.101
-external_ip: 192.168.10.102
+host_ip: 192.168.10.101
+public_ip: 192.168.10.102
+public_interface: eth1
+devstack_branch: stable/liberty
+devstack_service_branch: liberty-eol
+devstack_admin_password: password
