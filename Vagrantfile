@@ -58,6 +58,7 @@ def config_provision(vm, conf)
             host_ip: conf['host_ip'],
             public_ip: conf['public_ip'],
             public_interface: conf['public_interface'],
+            openstack_version: conf['openstack_version'],
             devstack_branch: conf['devstack_branch'],
             devstack_service_branch: conf['devstack_service_branch'],
             devstack_admin_password: conf['devstack_admin_password'],
