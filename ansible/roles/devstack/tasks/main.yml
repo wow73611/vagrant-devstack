@@ -78,14 +78,15 @@
   become: yes
   when: openstack_version == 'mitaka'
 
-#- name: allow user group to have passwordless sudo
-#  lineinfile:
-#      dest: "{{ devstack_path }}/tools/install_pip.sh"
-#      state: present
-#      regexp: "^pip_install -U setuptools"
-#      line: "pip_install -U setuptools==18.2"
-#  become_user: "{{ stack_user }}"
-#  become: yes
+- name: fix pip_install -U os-testr for liberty
+  lineinfile:
+      dest: "{{ devstack_path }}/tools/install_pip.sh"
+      state: present
+      regexp: "^pip_install -U setuptools"
+      line: "pip_install -U setuptools==18.2"
+  become_user: "{{ stack_user }}"
+  become: yes
+  when: openstack_version == 'liberty'
 
 - name: copy local.conf
   template:
