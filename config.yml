@@ -2,12 +2,13 @@
 #box_name: ubuntu/xenial64
 box_name: ubuntu/trusty64
 box_hostname: devstack
-vm_memory: 8192
-vm_cpus: 4
+vm_memory: 10240
+vm_cpus: 6
 #local_sync_folder: ./opt
 host_ip: 192.168.10.101
 public_ip: 192.168.10.102
-public_interface: eth1
-devstack_branch: stable/liberty
-devstack_service_branch: liberty-eol
+public_interface: eth2
+openstack_version: liberty
+devstack_branch: "stable/{{ openstack_version }}"
+devstack_service_branch: "{{ openstack_version }}-eol"
 devstack_admin_password: password

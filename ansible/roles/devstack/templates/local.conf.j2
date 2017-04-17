@@ -9,12 +9,39 @@ SERVICE_TOKEN=$ADMIN_PASSWORD
 DEST={{ devstack_dest }}
 LOGFILE=$DEST/logs/stack.sh.log
 VERBOSE=True
-LOG_COLOR=True
+LOG_COLOR=False
 SCREEN_LOGDIR=$DEST/logs
 
 RECLONE=False
 OFFLINE=False
-GIT_BASE=git://git.openstack.org
+GIT_BASE=https://github.com
+GIT_TIMEOUT=600
+
+CEILOMETER_BRANCH={{ devstack_service_branch }}
+CINDER_BRANCH={{ devstack_service_branch }}
+GLANCE_BRANCH={{ devstack_service_branch }}
+HEAT_BRANCH={{ devstack_service_branch }}
+HORIZON_BRANCH={{ devstack_service_branch }}
+IRONIC_BRANCH={{ devstack_service_branch }}
+KEYSTONE_BRANCH={{ devstack_service_branch }}
+NEUTRON_BRANCH={{ devstack_service_branch }}
+NEUTRON_FWAAS_BRANCH={{ devstack_service_branch }}
+NEUTRON_LBAAS_BRANCH={{ devstack_service_branch }}
+NEUTRON_VPNAAS_BRANCH={{ devstack_service_branch }}
+NOVA_BRANCH={{ devstack_service_branch }}
+SAHARA_BRANCH={{ devstack_service_branch }}
+SWIFT_BRANCH={{ devstack_service_branch }}
+TROVE_BRANCH={{ devstack_service_branch }}
+
+REQUIREMENTS_BRANCH={{ devstack_service_branch }}
+
+{% if openstack_version == 'mitaka' %}
+TEMPEST_BRANCH="13.0.0"
+{% elif openstack_version == 'ocata' %}
+TEMPEST_BRANCH="14.0.0"
+{% else %}
+TEMPEST_BRANCH="12.1.0"
+{% endif %}
 
 HOST_IP={{ host_ip }}
 
@@ -44,6 +71,8 @@ Q_ML2_TENANT_NETWORK_TYPE=vxlan
 ENABLE_TENANT_TUNNELS=True
 OVS_ENABLE_TUNNELING=True
 
+IP_VERSION=4
+SERVICE_IP_VERSION=4
 NEUTRON_CREATE_INITIAL_NETWORKS=True
 
 enable_service rabbit mysql key

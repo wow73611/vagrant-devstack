@@ -1,7 +1,8 @@
 ---
 
+openstack_version: liberty
 devstack_repo: git://github.com/openstack-dev/devstack.git
-devstack_branch: stable/liberty
+devstack_branch: "stable/{{ openstack_version }}"
 devstack_service_branch: "{{ devstack_branch }}"
 devstack_path: /opt/devstack
 devstack_dest: /opt/stack

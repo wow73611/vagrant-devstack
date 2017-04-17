@@ -57,6 +57,27 @@
   become_user: "{{ stack_user }}"
   become: yes
 
+- name: checkout requirements for openstacksdk version conflict
+  git:
+    repo: "https://github.com/openstack/requirements.git"
+    dest: "{{ devstack_dest }}/requirements"
+    version: "{{ devstack_branch }}"
+    accept_hostkey: yes
+    force: yes
+  become_user: "{{ stack_user }}"
+  become: yes
+  when: openstack_version == 'mitaka'
+
+- name: setup openstacksdk===0.9.12 in upper-constraints.txt
+  lineinfile:
+      dest: "{{ devstack_dest }}/requirements/upper-constraints.txt"
+      state: present
+      regexp: "^openstacksdk===0.8"
+      line: "openstacksdk===0.9.12"
+  become_user: "{{ stack_user }}"
+  become: yes
+  when: openstack_version == 'mitaka'
+
 #- name: allow user group to have passwordless sudo
 #  lineinfile:
 #      dest: "{{ devstack_path }}/tools/install_pip.sh"
@@ -77,6 +98,15 @@
   template:
     src: autostack.sh
     dest: "/home/{{ stack_user }}/autostack.sh"
+    mode: 0755
+    owner: "{{ stack_user }}"
+  become_user: "{{ stack_user }}"
+  become: yes
+
+- name: copy screen_restart.sh
+  template:
+    src: screen_restart.sh
+    dest: "{{ devstack_path }}/screen_restart.sh"
     mode: 0755
     owner: "{{ stack_user }}"
   become_user: "{{ stack_user }}"

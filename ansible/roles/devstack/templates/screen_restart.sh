@@ -4,14 +4,14 @@
 IFS="
 "
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+basedir="{{ devstack_path }}"
 
-if [ ! -e $basedir/devstack/stack-screenrc ]; then
-    echo "$basedir/devstack/stack-screenrc not found.  Did stack.sh fail?"
+if [ ! -e $basedir/stack-screenrc ]; then
+    echo "$basedir/stack-screenrc not found.  Did stack.sh fail?"
     exit 1
 fi
 
-for line in `cat $basedir/devstack/stack-screenrc |tr -d "\r"`; do
+for line in `cat $basedir/stack-screenrc |tr -d "\r"`; do
     if  [[ $line == stuff* ]]; then
         echo
         # Extract the command line to run this service
