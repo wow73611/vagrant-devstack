@@ -33,7 +33,7 @@ SAHARA_BRANCH={{ devstack_service_branch }}
 SWIFT_BRANCH={{ devstack_service_branch }}
 TROVE_BRANCH={{ devstack_service_branch }}
 
-REQUIREMENTS_BRANCH={{ devstack_service_branch }}
+REQUIREMENTS_BRANCH=stable/{{ openstack_version }}
 
 {% if openstack_version == 'mitaka' %}
 TEMPEST_BRANCH="13.0.0"
