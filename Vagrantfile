@@ -45,6 +45,10 @@ def config_provider(vm, conf)
         vb.customize ["modifyvm", :id, "--ioapic", "on"]
         # eth2 must be in promiscuous mode for floating IPs to be accessible
         vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+        vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+
     end
 end
 
