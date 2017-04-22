@@ -29,13 +29,21 @@ def config_network(vm, conf)
     # this will be the OpenStack "public" network ip and subnet mask
     # should match floating_ip_range var in devstack.yml
     vm.network :private_network, ip: conf['public_ip'], :netmask => "255.255.255.0", :auto_config => false
-    #vm.network :forwarded_port, guest: 80, host: 8080
-    #vm.network :forwarded_port, guest: 5000, host: 5000
-    #vm.network :forwarded_port, guest: 35357, host: 35357
-    #vm.network :forwarded_port, guest: 8774, host: 8774
-    #vm.network :forwarded_port, guest: 8776, host: 8776
-    #vm.network :forwarded_port, guest: 9292, host: 9292
-    #vm.network :forwarded_port, guest: 9696, host: 9696
+    # Horizon
+    vm.network :forwarded_port, guest: 80, host: 80
+    # Keystone
+    vm.network :forwarded_port, guest: 5000, host: 5000
+    vm.network :forwarded_port, guest: 35357, host: 35357
+    # Nova
+    vm.network :forwarded_port, guest: 8774, host: 8774
+    # Cinder
+    vm.network :forwarded_port, guest: 8776, host: 8776
+    # Glance
+    vm.network :forwarded_port, guest: 9292, host: 9292
+    # Neutron
+    vm.network :forwarded_port, guest: 9696, host: 9696
+    # VNC
+    vm.network :forwarded_port, guest: 6080, host: 6080
 end
 
 def config_provider(vm, conf)
