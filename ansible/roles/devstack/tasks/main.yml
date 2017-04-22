@@ -124,6 +124,10 @@
   become_user: "{{ stack_user }}"
   become: yes
 
+- name: convert screen process to upstart script 
+  command: "/{{ devstack_path }}/screen_restart.sh"
+  become: yes
+
 #- name: Make sure 'localhost' entry exists in /etc/hosts
 #  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 devstack localhost' owner=root group=root mode=0644
 
