@@ -48,7 +48,7 @@ TEMPEST_BRANCH="13.0.0"
 {% elif openstack_version == 'ocata' %}
 TEMPEST_BRANCH="14.0.0"
 {% else %}
-TEMPEST_BRANCH="12.1.0"
+TEMPEST_BRANCH=master
 {% endif %}
 
 HOST_IP={{ host_ip }}
@@ -86,6 +86,12 @@ NEUTRON_CREATE_INITIAL_NETWORKS=True
 enable_service rabbit mysql key
 
 enable_service n-api n-crt n-obj n-cpu n-cond n-sch n-novnc n-cauth
+
+# http://stackoverflow.com/questions/41064739/openstack-no-hosts-found-to-map-to-cell-exiting
+{% if openstack_version == 'ocata' %}
+enable_service n-cell
+enable_service placement-api placement-client
+{% endif %}
 
 disable_service n-net
 enable_service q-svc q-agt q-dhcp q-l3 q-meta neutron
