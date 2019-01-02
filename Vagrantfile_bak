@@ -1,0 +1,60 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2" if not defined? VAGRANTFILE_API_VERSION
+
+conf = {}
+
+require 'yaml'
+conf_path = ENV.fetch('USER_CONF','config.yml')
+if File.file?(conf_path)
+    user_conf = YAML.load_file(conf_path)
+    conf.update(user_conf)
+else
+    raise "Configuration file #{conf_path} does not exist."
+end
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # resolve "stdin: is not a tty warning", related issue and proposed
+  # fix: https://github.com/mitchellh/vagrant/issues/1673
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.ssh.forward_agent = true
+
+  config.vm.define conf['box_hostname'] do |my|
+    my.vm.box = conf['box_name']
+    my.vm.box_url = conf['box_url'] if conf['box_url']
+    my.vm.hostname = conf['box_hostname']
+    #my.ssh.username = conf['devstack_user']
+
+    # this will be the endpoint
+    my.vm.network :private_network, ip: conf['host_ip']
+    my.vm.network :forwarded_port, guest: 35357, host: 35357
+    my.vm.network :forwarded_port, guest: 5000, host: 5000
+    # OpenStack "public" network should match floating_ip_range var in devstack.yml
+    #my.vm.network :private_network, ip: conf['public_ip'], :netmask => "255.255.255.0", :auto_config => false
+  
+    my.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", conf['vm_memory']]
+        vb.customize ["modifyvm", :id, "--cpus", conf['vm_cpus']]
+        vb.customize ["modifyvm", :id, "--ioapic", "on"]
+        # eth2 must be in promiscuous mode for floating IPs to be accessible
+        vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+    end
+  
+    my.vm.provision :ansible do |ansible|
+        ansible.host_key_checking = false
+        ansible.playbook = "ansible/playbook.yml"
+        ansible.verbose = "v"
+        ansible.raw_arguments = ['-T 30', '-e pipelining=True']
+        ansible.extra_vars = {
+            devstack_branch: conf['devstack_branch'],
+            devstack_service_branch: conf['devstack_service_branch'],
+            devstack_admin_password: conf['devstack_admin_password'],
+            host_ip: conf['host_ip'],
+            public_interface: conf['public_interface'],
+        }
+    end
+  end
+end
