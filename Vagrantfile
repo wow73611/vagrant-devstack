@@ -9,7 +9,7 @@ conf = {}
 require 'yaml'
 conf_path = ENV.fetch('USER_CONF','config.yml')
 if File.file?(conf_path)
-    user_conf = YAML.load_file(conf_path)
+    user_conf = YAML.load_file(File.join(File.dirname(__FILE__),conf_path))
     conf.update(user_conf)
 else
     raise "Configuration file #{conf_path} does not exist."
@@ -48,14 +48,20 @@ end
 
 def config_provider(vm, conf)
     vm.provider :virtualbox do |vb|
-        vb.customize ["modifyvm", :id, "--memory", conf['vm_memory']]
         vb.customize ["modifyvm", :id, "--cpus", conf['vm_cpus']]
+        vb.customize ["modifyvm", :id, "--memory", conf['vm_memory']]
         vb.customize ["modifyvm", :id, "--ioapic", "on"]
         # eth2 must be in promiscuous mode for floating IPs to be accessible
         vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+
+        # change the network card hardware for better performance
+        vb.customize ["modifyvm", :id, "--nictype1", "virtio" ]
+        vb.customize ["modifyvm", :id, "--nictype2", "virtio" ]
+
+        # suggested fix for slow network performance
+        # see https://github.com/mitchellh/vagrant/issues/1807
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-        vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
 
     end
 end
@@ -82,6 +88,10 @@ def config_provision(vm, conf)
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    # resolve "stdin: is not a tty warning", related issue and proposed 
+    # fix: https://github.com/mitchellh/vagrant/issues/1673
+    config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+    config.ssh.forward_agent = true
 
     config.vm.box = conf['box_name']
     config.vm.box_url = conf['box_url'] if conf['box_url']
@@ -90,12 +100,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if Vagrant.has_plugin?("vagrant-cachier")
         config.cache.scope = :box
     end
-
-    # resolve "stdin: is not a tty warning", related issue and proposed 
-    # fix: https://github.com/mitchellh/vagrant/issues/1673
-    config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-    config.ssh.forward_agent = true
-
     config_network(config.vm, conf)
     config_provider(config.vm, conf)
     config_provision(config.vm, conf)
